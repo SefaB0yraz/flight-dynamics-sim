@@ -55,7 +55,7 @@ class PIDController {
     private:
         double Kp= 0.75;
         double Ki= 0.01;
-        double Kd= 0.75;
+        double Kd= 1.5;
         double integral;
         double previousError;
     public:
@@ -63,12 +63,12 @@ class PIDController {
         integral = 0;
         previousError = 0;
     }   
-    double compute(double ControlInput, double target, double current, double dt){
+    double compute(double appliedElevatorAngle, double target, double current, double dt){
         double error= target - current;
-        if (ControlInput == 10 && error > 0){
+        if (appliedElevatorAngle == 10 && error > 0){
             //for integral windup.
         }
-        else if (ControlInput == -10 && error < 0){
+        else if (appliedElevatorAngle == -10 && error < 0){
             //for integral windup.
         }
         else{
@@ -84,11 +84,11 @@ class PIDController {
 
 };
 int main(){
-double targetPitch=30;
+double targetPitch=10;
 PIDController pid;
 Aircraft kerkenez;
 cout << "Pitch Rate: " << kerkenez.getPitchRate() << endl;
-for (int i =0; i<30; i++){
+for (int i =0; i<90; i++){
     double pidOutput = pid.compute(kerkenez.getElevatorAngle(),targetPitch*DEG_TO_RAD, kerkenez.getPitch(), 0.1);
     kerkenez.setElevatorAngle(pidOutput);
 
@@ -96,7 +96,7 @@ for (int i =0; i<30; i++){
     cout << "Pitch: " << kerkenez.getPitch() << endl;
     cout << "Pitch Rate: " << kerkenez.getPitchRate() << endl;
     cout << "Control Input: " << pidOutput << endl;
-    cout<<"pid output: "<<pidOutput<<endl;
+    cout<<"pid output: "<<pidOutput*RAD_TO_DEG<<endl;
     cout<<"actual control input: "<<kerkenez.getElevatorAngle()<<endl;
     cout<<"integral: "<<pid.getIntegral()<<endl;
 }
